@@ -40,23 +40,23 @@ class Game
      */
     private void createRooms()
     {
-        Room outside, theatre, pub, lab, office;
+        Room Prison_Block, theatre, pub, lab, office;
       
         // create the rooms
-        outside = new Room("outside the main entrance of the university");
+        Prison_Block = new Room("Inside the main Prison complex");
         theatre = new Room("in a lecture theatre");
         pub = new Room("in the campus pub");
         lab = new Room("in a computing lab");
         office = new Room("in the computing admin office");
         
         // initialise room exits
-        outside.setExits(null, theatre, lab, pub);
-        theatre.setExits(null, null, null, outside);
-        pub.setExits(null, outside, null, null);
-        lab.setExits(outside, office, null, null);
+        Prison_Block.setExits(null, theatre, lab, pub);
+        theatre.setExits(null, null, null, Prison_Block);
+        pub.setExits(null, Prison_Block, null, null);
+        lab.setExits(Prison_Block, office, null, null);
         office.setExits(null, null, null, lab);
 
-        currentRoom = outside;  // start game outside
+        currentRoom = Prison_Block;  // start game outside
     }
 
     /**
