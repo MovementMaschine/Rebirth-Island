@@ -40,21 +40,25 @@ class Game
      */
     private void createRooms()
     {
-        Room Prison_Block, theatre, pub, lab, office;
+        Room Prison_Block, Hauptsitz, Helikopter_Landeplatz, Ufer, Hafen, Chemie_Labor, Fabrik;
       
         // create the rooms
-        Prison_Block = new Room("Inside the main Prison complex");
-        theatre = new Room("in a lecture theatre");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
+        Prison_Block = new Room("im Haupt Gefängnisblock");
+        Hauptsitz = new Room("im Hauptsitz der Gefänginsleitung");
+        Helikopter_Landeplatz = new Room("auf dem Helikopter Landeplatz");
+        Ufer = new Room("am Ufer des Aralsees");
+        Hafen = new Room("am Hafen");
+        Chemie_Labor = new Room("im Chemie Labor");
+        Fabrik = new Room("in der Fabrik");
         
         // initialise room exits
-        Prison_Block.setExits(null, theatre, lab, pub);
-        theatre.setExits(null, null, null, Prison_Block);
-        pub.setExits(null, Prison_Block, null, null);
-        lab.setExits(Prison_Block, office, null, null);
-        office.setExits(null, null, null, lab);
+        Prison_Block.setExits(Ufer, Helikopter_Landeplatz, Hafen, Hauptsitz);
+        Hauptsitz.setExits(null, Prison_Block, null, null);
+        Helikopter_Landeplatz.setExits(null, null, Chemie_Labor, Prison_Block);
+        Ufer.setExits(null, null, Prison_Block, null);
+        Hafen.setExits(Prison_Block, Chemie_Labor, null, null);
+        Chemie_Labor.setExits(Helikopter_Landeplatz, null, null, Hafen);
+        Fabrik.setExits(null, null, null, null);
 
         currentRoom = Prison_Block;  // start game outside
     }
@@ -87,7 +91,7 @@ class Game
         System.out.println("Adventure is a new, incredibly boring adventure game.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
-        System.out.println("You are " + currentRoom.getDescription());
+        System.out.println("Du befindest dich " + currentRoom.getDescription());
         System.out.print("Exits: ");
         if(currentRoom.northExit != null)
             System.out.print("north ");
