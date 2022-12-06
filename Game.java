@@ -87,8 +87,8 @@ class Game
     private void printWelcome()
     {
         System.out.println();
-        System.out.println("Welcome to Adventure!");
-        System.out.println("Adventure is a new, incredibly boring adventure game.");
+        System.out.println("Willkommen auf Rebirth Island!");
+        System.out.println("Überlebe um zu gewinnen");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
         System.out.println("Du befindest dich " + currentRoom.getDescription());
