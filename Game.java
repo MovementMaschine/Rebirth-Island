@@ -40,7 +40,7 @@ class Game
      */
     private void createRooms()
     {
-        Room Prison_Block, Hauptsitz, Helikopter_Landeplatz, Ufer, Hafen, Chemie_Labor, Fabrik;
+        Room Prison_Block, Hauptsitz, Helikopter_Landeplatz, Ufer, Hafen, Chemie_Labor, Fabrik, Abstelllager, Biowaffenlabor, Wohnviertel, KontrollRäume, Zelte, Sicherheitsabteilung;
       
         // create the rooms
         Prison_Block = new Room("im Haupt Gefängnisblock");
@@ -50,15 +50,28 @@ class Game
         Hafen = new Room("am Hafen");
         Chemie_Labor = new Room("im Chemie Labor");
         Fabrik = new Room("in der Fabrik");
+        Abstelllager = new Room("im Abstelllager");
+        Biowaffenlabor = new Room("im Biowaffenlabor");
+        Wohnviertel = new Room("im Wohnviertel");
+        KontrollRäume = new Room("in den Kontrollräumen");
+        Zelte = new Room("bei den Zelten");
+        Sicherheitsabteilung = new Room("in der Sicherheitsabteilung");
         
         // initialise room exits
         Prison_Block.setExits(Ufer, Helikopter_Landeplatz, Hafen, Hauptsitz);
-        Hauptsitz.setExits(null, Prison_Block, null, null);
-        Helikopter_Landeplatz.setExits(null, null, Chemie_Labor, Prison_Block);
-        Ufer.setExits(null, null, Prison_Block, null);
-        Hafen.setExits(Prison_Block, Chemie_Labor, null, null);
+        Hauptsitz.setExits(KontrollRäume, Prison_Block, Fabrik, Wohnviertel);
+        Helikopter_Landeplatz.setExits(Abstelllager, null, Chemie_Labor, Prison_Block);
+        Ufer.setExits(null, Abstelllager, Prison_Block, KontrollRäume);
+        Hafen.setExits(Prison_Block, Chemie_Labor, null, Fabrik);
         Chemie_Labor.setExits(Helikopter_Landeplatz, null, null, Hafen);
-        Fabrik.setExits(null, null, null, null);
+        Fabrik.setExits(Hauptsitz, Hafen, null, Wohnviertel);
+        Abstelllager.setExits(null, Biowaffenlabor, Helikopter_Landeplatz, Prison_Block);
+        Biowaffenlabor.setExits(null, null, Chemie_Labor, Abstelllager);
+        Wohnviertel.setExits(Zelte, Hauptsitz, null, Sicherheitsabteilung);
+        KontrollRäume.setExits(null, Ufer, Hauptsitz, Zelte);
+        Zelte.setExits(null, KontrollRäume, Wohnviertel, Sicherheitsabteilung);
+        Sicherheitsabteilung.setExits(null, Zelte, null, null);
+        
 
         currentRoom = Prison_Block;  // start game outside
     }
@@ -88,8 +101,7 @@ class Game
     {
         System.out.println();
         System.out.println("Willkommen auf Rebirth Island!");
-        System.out.println("Überlebe um zu gewinnen");
-        System.out.println("Type 'help' if you need help.");
+        System.out.println("Überlebe um zu gewinnen.");
         System.out.println();
         System.out.println("Du befindest dich " + currentRoom.getDescription());
         System.out.print("Exits: ");
@@ -138,7 +150,7 @@ class Game
      */
     private void printHelp() 
     {
-        System.out.println("You are lost. You are alone. You wander");
+        System.out.println("Du hast bereits ... Runden überlebt");
         System.out.println("around at the university.");
         System.out.println();
         System.out.println("Your command words are:");
@@ -174,7 +186,7 @@ class Game
             System.out.println("There is no door!");
         else {
             currentRoom = nextRoom;
-            System.out.println("You are " + currentRoom.getDescription());
+            System.out.println("Du bist " + currentRoom.getDescription());
             System.out.print("Exits: ");
             if(currentRoom.northExit != null)
                 System.out.print("north ");
