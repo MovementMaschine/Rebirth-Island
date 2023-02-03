@@ -17,6 +17,8 @@
 
 class Game 
 {
+    int rounds = 0;
+
     // ~~~ initialization ~~~
     public static void main(String args[]) {
         Game g = new Game();
@@ -91,6 +93,8 @@ class Game
             Command command = parser.getCommand();
             finished = processCommand(command);
         }
+        System.out.println();
+        System.out.println();
         System.out.println("Listenaktualisierung...");
     }
 
@@ -137,8 +141,23 @@ class Game
             goRoom(command);
         else if (commandWord.equals("quit"))
             wantToQuit = quit(command);
+        if (rounds == 10)
+        
+        {
+        System.out.println();    
+        System.out.println();
+        System.out.print("Du hast überlebt und wirst nun extrahiert!");
+        return true;
+        }
 
         return wantToQuit;
+    }
+
+   
+
+    public int giveRounds()
+    {
+        return rounds;
     }
 
     // implementations of user commands:
@@ -151,7 +170,7 @@ class Game
     private void printHelp() 
     {
         System.out.println();
-        System.out.println("Du hast bereits ... Runden überlebt");
+        System.out.print("Du hast bereits "); System.out.print(giveRounds()); System.out.print(" Runden übelebt");
         System.out.println();
         System.out.println("Your command words are:");
         System.out.println("   go quit help");
@@ -173,19 +192,24 @@ class Game
 
         // Try to leave current room.
         Room nextRoom = null;
-        if(direction.equals("north"))
+        if(direction.equals("north")){
             nextRoom = currentRoom.northExit;
-        if(direction.equals("east"))
+            rounds++;}
+        if(direction.equals("east")){
             nextRoom = currentRoom.eastExit;
-        if(direction.equals("south"))
+            rounds++;}
+        if(direction.equals("south")){
             nextRoom = currentRoom.southExit;
-        if(direction.equals("west"))
+            rounds++;}
+        if(direction.equals("west")){
             nextRoom = currentRoom.westExit;
+            rounds++;}
 
         if (nextRoom == null)
             System.out.println("There is no door!");
         else {
             currentRoom = nextRoom;
+            System.out.println();
             System.out.println("Du bist " + currentRoom.getDescription());
             System.out.print("Exits: ");
             if(currentRoom.northExit != null)
