@@ -13,47 +13,75 @@
  * @version 1.0 (February 2002)
  */
 
-class Room 
-{
-    public String description;
-    public Room northExit;
-    public Room southExit;
-    public Room eastExit;
-    public Room westExit;
+import java.util.*;
 
+class Room {
+    private String description;
+    private HashMap<String, Room> exits;
+    /**   
+    private Room northExit;
+    private Room southExit;
+    private Room eastExit;
+    private Room westExit;
+    */
     /**
      * Create a room described "description". Initially, it has
      * no exits. "description" is something like "a kitchen" or
      * "an open court yard".
      */
-    public Room(String description) 
-    {
+    public Room(String description) {
         this.description = description;
+        exits = new HashMap<>();
     }
 
     /**
-     * Define the exits of this room.  Every direction either leads
+     * Define the exits of this room. Every direction either leads
      * to another room or is null (no exit there).
      */
-    public void setExits(Room north, Room east, Room south, Room west) 
+    public void setExit(String direction, Room neighbor) 
     {
-        if(north != null)
-            northExit = north;
-        if(east != null)
-            eastExit = east;
-        if(south != null)
-            southExit = south;
-        if(west != null)
-            westExit = west;
+        
+            exits.put(direction, neighbor);
+        
+        /** 
+        if (north != null)
+           {exits.put("north", north);}
+        if (east != null)
+           {exits.put("east", east);} 
+        if (south != null)
+           {exits.put("south", south);}
+        if (west != null)
+           {exits.put("west", west);}*/
+
     }
 
     /**
      * Return the description of the room (the one that was defined
      * in the constructor).
      */
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
+    public Room getExit(String direction) 
+    {
+        return exits.get(direction);
+    }
+    /**{
+        if (direction == "north") {
+            return this.northExit;
+        }
+        if (direction == "south") {
+            return this.southExit;
+        }
+        if (direction == "east") {
+            return this.eastExit;
+        }
+        if (direction == "west") {
+            return this.westExit;
+        }
+        else return null;
+    }*/
+   
 }
+
