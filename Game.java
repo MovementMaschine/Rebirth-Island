@@ -291,6 +291,11 @@ class Game {
         return wantToQuit;
     }
 
+    private void look()
+    {
+    
+    }
+
     public int giveRounds() {
         return rounds;
     }
@@ -375,10 +380,7 @@ class Game {
         } else
             return true; // signal that we want to quit
     }
-    private void look()
-    {
-    
-    }
+   
 
     /**
      * private void printLocationInfo() {
