@@ -1,8 +1,9 @@
-class Roze{
+class Zielperson
+{
     private String name;
     private Room location;
 
-    public Roze (String name, Room location){
+    public Zielperson (String name, Room location){
      this.name = name;
      this.location = location;
     }

@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * This class is the main class of the "World of Zuul" application.
  * "World of Zuul" is a very simple, text based adventure game. Users
@@ -30,12 +32,17 @@ class Game {
             Biowaffenlabor, Wohnviertel, Kontroll_Dach, KontrollRäume, Zelte, Sicherheitsabteilung, Prison_Dach,
             Prison_Keller, Leuchtturm, Chemie_Dach,
             Fabrik_Dach, Biowaffen_Keller, Biowaffen_Dach, Wasser;
+    Zielperson Zielperson;
+    Item Bruen, Self_Revive, Self_Revive2, Kevlarweste, Kevlarweste2, Kar98k, Milano, Fernrohr, R9_0, Amax, Kilo, Mac_10, Bullfrog, Nagelpistole, Mp5;
+    ArrayList<Item> inventory = new ArrayList<Item>();
 
     /**
      * Create the game and initialise its internal map.
      */
     public Game() {
         createRooms();
+        createItems();
+        Zielperson = new Zielperson("Zielperson", Biowaffen_Dach);
         parser = new Parser();
     }
 
@@ -197,13 +204,60 @@ class Game {
         Leuchtturm.setExit("nowhere", Leuchtturm);
 
         currentRoom = Prison_Block; // start game outside
+
+        inventory.add(new Item("Starteritem"));
     }
 
-    /**
-     * Main play routine. Loops until end of play.
-     */
+    private void createItems()
+    {
+        Bruen = new Item("Bruen");
+        Prison_Dach.setItem(Bruen);
+        
+        Self_Revive = new Item("Self Revive");
+        Sicherheitsabteilung.setItem(Self_Revive);
+        
+        Self_Revive2 = new Item("Self Revive");
+        Biowaffen_Keller.setItem(Self_Revive2);
+        
+        Kevlarweste = new Item("Kevlarweste");
+        Abstelllager.setItem(Kevlarweste);
+
+        Kevlarweste2 = new Item("Kevlarweste");
+        Fabrik.setItem(Kevlarweste2);
+
+        Kar98k = new Item("Kar98k");
+        Leuchtturm.setItem(Kar98k);
+
+        Milano = new Item("Milano");
+        Hauptsitz.setItem(Milano);
+
+        Fernrohr = new Item("Fernrohr");
+        Leuchtturm.setItem(Fernrohr);
+ 
+        R9_0 =new Item("R9-0");
+        Chemie_Labor.setItem(R9_0);
+
+        Amax = new Item("Amax");
+        Wohnviertel.setItem(Amax);
+
+        Kilo = new Item("Kilo");
+        Fabrik.setItem(Kilo);
+
+        Mac_10 = new Item("Mac 10");
+        KontrollRäume.setItem(Mac_10);
+
+        Bullfrog = new Item("Bullfrog");
+        Helikopter_Landeplatz.setItem(Bullfrog);
+
+        Nagelpistole = new Item("Nagelpistole");
+        Prison_Block.setItem(Nagelpistole);
+
+        Mp5 = new Item("Mp5");
+        Zelte.setItem(Mp5);
+    }
+
     public void play() {
-        printWelcome();
+          printWelcome();
 
         // Enter the main command loop. Here we repeatedly read commands and
         // execute them until the game is over.
@@ -218,37 +272,15 @@ class Game {
         System.out.println("Listenaktualisierung...");
     }
 
-    /**
-     * Print out the opening message for the player.
-     */
+    
     private void printWelcome() {
         System.out.println();
         System.out.println("Willkommen auf Rebirth Island!");
         System.out.println("Überlebe um zu gewinnen.");
+        System.out.println("Du wirst nach 10 überlebten Runden oder nach dem Auffinden der Zielperson extrahiert.");
         System.out.println();
-        System.out.println("Du befindest dich " + currentRoom.getDescription());
-        System.out.print("Exits: ");
-        if (currentRoom.getExit("north") != null)
-            System.out.print("north ");
-        if (currentRoom.getExit("east") != null)
-            System.out.print("east ");
-        if (currentRoom.getExit("south") != null)
-            System.out.print("south ");
-        if (currentRoom.getExit("west") != null)
-            System.out.print("west ");
-        if (currentRoom.getExit("northeast") != null)
-            System.out.print("northeast ");
-        if (currentRoom.getExit("southeast") != null)
-            System.out.print("southeast ");
-        if (currentRoom.getExit("southwest") != null)
-            System.out.print("southwest ");
-        if (currentRoom.getExit("northwest") != null)
-            System.out.print("northwest ");
-        if (currentRoom.getExit("up") != null)
-            System.out.print("up ");
-        if (currentRoom.getExit("down") != null)
-            System.out.print("down ");
-        System.out.println();
+
+        System.out.println(currentRoom.getLongDescribtion());
     }
 
     /**
@@ -265,14 +297,27 @@ class Game {
         }
 
         String commandWord = command.getCommandWord();
-        if (commandWord.equals("help"))
+        if (commandWord.equals("help")){
             printHelp();
-        else if (commandWord.equals("go"))
+        }
+        else if (commandWord.equals("go")){
             goRoom(command);
-        else if (commandWord.equals("look"))
-            look();    
-        else if (commandWord.equals("quit"))
+        }
+        else if (commandWord.equals("look")){
+            wantToQuit = look();
+        }
+        else if (commandWord.equals("quit")){
             wantToQuit = quit(command);
+        }
+        else if (commandWord.equals("inventory")) {
+            printInventory();
+        }
+        else if (commandWord.equals("get")) {
+                getItem(command);    
+        }
+        else if (commandWord.equals("drop")) {
+            dropItem(command);    
+        }
 
         if (currentRoom == Wasser) {
             System.out.print("Du bist ertrunken!");
@@ -291,9 +336,28 @@ class Game {
         return wantToQuit;
     }
 
-    private void look()
-    {
-    
+    private void printInventory() {
+        String output = " ";
+        for (int i = 0; i < inventory.size(); i++) {
+            output += inventory.get(i).getDescription() + " ";
+        }
+        System.out.println("Du trägst mit dir:");
+        System.out.println(output);
+    }
+
+    private boolean look() {
+        if (currentRoom == Zielperson.getLocation()) 
+            {
+            System.out.print("Du hast die Zielperson gefunden und wirst jetzt extrahiert!");
+            return true;
+            } 
+            
+            else 
+            {
+            System.out.println("Die Zielperson ist hier nicht aufzufinden!");
+            return false;
+            }
+
     }
 
     public int giveRounds() {
@@ -302,29 +366,86 @@ class Game {
 
     // implementations of user commands:
 
-    /**
-     * Print out some help information.
-     * Here we print some stupid, cryptic message and a list of the
-     * command words.
-     */
+   
     private void printHelp() {
         System.out.println();
         System.out.print("Du hast bereits ");
         System.out.print(giveRounds());
         System.out.print(" Runden übelebt");
         System.out.println();
-        System.out.println("Your command words are:");
-        System.out.println("   go quit help");
+        System.out.println("Deine Kommandos sind:");
+        System.out.println("-> go, quit, help, inventory, look, get, drop");
+        System.out.println();
     }
 
     /**
      * Try to go to one direction. If there is an exit, enter
      * the new room, otherwise print an error message.
      */
-    private void goRoom(Command command) {
+
+    private void getItem(Command command) {
         if (!command.hasSecondWord()) {
             // if there is no second word, we don't know where to go...
-            System.out.println("Go where?");
+            System.out.println("Was aufheben?");
+            return;
+        }
+
+        String item = command.getSecondWord();
+
+        // Try to leave current room.
+
+        Item newItem = currentRoom.getItem(item);
+
+        if (newItem == null){
+            System.out.println("Dieses Item gibt es hier nicht!");
+        }
+        else if (inventory.size() > 2) 
+        System.out.println("Du kannst nur maximal 3 Items gleichzeitig in deinem Inventar haben!");
+        else {
+           inventory.add(newItem);
+           currentRoom.removeItem(item);
+           System.out.println("Aufgehoben:" + item);
+           System.out.println();
+        }
+        }
+
+        private void dropItem(Command command) {
+            if (!command.hasSecondWord()) {
+                // if there is no second word, we don't know where to go...
+                System.out.println("Was fallenlassen?");
+                return;
+            }
+    
+            String item = command.getSecondWord();
+    
+            // Try to leave current room.
+    
+            Item newItem = null;
+            int index = 0;
+            for (int i = 0; i < inventory.size(); i++) {
+                if (inventory.get(i).getDescription().equals(item)) {
+                     newItem = inventory.get(i);
+                     index = i;
+                }
+            }
+    
+            if (newItem == null){
+                System.out.println("Dieses Item befindet sich nicht in deinem Inventar!");
+            }
+            else if (inventory.size() == 1)
+            System.out.println("Du musst mindestens ein Item bei dir haben!");
+            else {
+               inventory.remove(index);
+               currentRoom.setItem(new Item (item));
+               System.out.println("Fallengelassen:" + item);
+               System.out.println();
+            }
+            }
+
+     private void goRoom(Command command) {
+        if (!command.hasSecondWord()) {
+            // if there is no second word, we don't know where to go...
+            System.out.println("Wohin?");
             return;
         }
 
@@ -335,36 +456,12 @@ class Game {
         Room nextRoom = currentRoom.getExit(direction);
 
         if (nextRoom == null)
-            System.out.println("There is no door!");
+            System.out.println("Hier geht es nicht lang!");
         else {
             currentRoom = nextRoom;
             System.out.println();
-            System.out.println("Du bist " + currentRoom.getDescription());
-            System.out.print("Exits: ");
-            if (currentRoom.getExit("north") != null)
-                System.out.print("north ");
+            System.out.println(currentRoom.getLongDescribtion());
             rounds++;
-            if (currentRoom.getExit("east") != null)
-                System.out.print("east ");
-            if (currentRoom.getExit("south") != null)
-                System.out.print("south ");
-            if (currentRoom.getExit("west") != null)
-                System.out.print("west ");
-            if (currentRoom.getExit("northeast") != null)
-                System.out.print("northeast ");
-            if (currentRoom.getExit("southeast") != null)
-                System.out.print("southeast ");
-            if (currentRoom.getExit("southwest") != null)
-                System.out.print("southwest ");
-            if (currentRoom.getExit("northwest") != null)
-                System.out.print("northwest ");
-            if (currentRoom.getExit("up") != null)
-                System.out.print("up ");
-            if (currentRoom.getExit("down") != null)
-                System.out.print("down ");
-            if (currentRoom.getExit("nowhere") != null)
-                System.out.print("nowhere ");    
-            System.out.println();
         }
     }
 
@@ -380,25 +477,5 @@ class Game {
         } else
             return true; // signal that we want to quit
     }
-   
 
-    /**
-     * private void printLocationInfo() {
-     * System.out.println("You are " + currentRoom.getDescription());
-     * System.out.print("Exits: ");
-     * if (currentRoom.getExit("north") != null) {
-     * System.out.print("north ");
-     * }
-     * if (currentRoom.getExit("east") != null) {
-     * System.out.print("east ");
-     * }
-     * if (currentRoom.getExit("south") != null) {
-     * System.out.print("south ");
-     * }
-     * if (currentRoom.getExit("west") != null) {
-     * System.out.print("west ");
-     * }
-     * System.out.println();
-     * }
-     */
 }
